@@ -1,0 +1,10 @@
+.tab-text{
+    font-weight: bold;
+    color: fuchsia;
+}
+
+
+.tab-text.active{
+    font-weight: bold;
+    color: darkblue;
+}
