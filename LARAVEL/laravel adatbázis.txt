@@ -1,0 +1,33 @@
+tábla létrehozás: (tutorial/database/migrations-ba kerül)
+	php artisan make:migration create_names_table
+
+táblán belül új oszlop: (tábla php)
+	$table->string('mezonev', 100)->default('alapertek');
+
+
+update-eli a táblát?
+	php artisan migrate
+
+
+
+TesztController.php
+    public function names()
+    {
+        /*$names = ['Gabi', 'Józsi', 'Pisti', 'Viktor', 'Anna', 'Kata'];
+        return view('pages.names', compact('names'));*/
+
+        $names = Name::all();   //name model alapján az adatbáziból rekordokat --> ez a lekérdezés
+
+        $names = Name::find(1); //i-edik elemet
+        $names = Name::where('name', "Anna")->first(); //első Anna nevű rekordot adja vissza
+        $names = Name::where('name', "Anna")->get(); //összes Anna nevű elemet tartalmazó rekordot adja vissza egy tömbben
+        $names = Name::where('id', ">", 2)->get(); //összes 2-nél nagyobb id-jú rekordot adja vissza
+
+        $names = Name::where('name', "<>", "Anna") //nem egyenlő Anna
+                        ->whereAnd("id",">", 1) //1-nél nagyobb id
+                        ->orderBy("id", "desc") //fordított sorrendbe rendezve
+                        ->get();
+
+
+        return view("pages.names", compact("names"));
+    }
