@@ -2,6 +2,10 @@
 namespace App\Http\Controllers;
 use App\Models\Name;
 use App\Models\Family;
+use Illuminate\Http\Request;
+use Exception;
+use GuzzleHttp\Psr7\Query;
+use Illuminate\Database\QueryException;
 
 class TesztController extends Controller
 {
@@ -23,6 +27,7 @@ class TesztController extends Controller
         return view('pages.names', compact('names'));*/
 
         $names = Name::all();   //name model alapján az adatbáziból rekordokat --> ez a lekérdezés
+        $families = Family::all();
 
         /*$names = Name::find(1); //i-edik elemet
         $names = Name::where('name', "Anna")->first(); //első Anna nevű rekordot adja vissza
@@ -35,7 +40,7 @@ class TesztController extends Controller
                         ->get();*/
 
 
-        return view("pages.names", compact("names"));
+        return view("pages.names", compact("names", 'families'));
     }
 
     public function namesCreate($family, $name) {
@@ -53,6 +58,82 @@ class TesztController extends Controller
         $familyRecord->save();
         return $familyRecord->id;
     }
+
+    public function deleteName(Request $request) {
+        $name = Name::find($request->input('id'));
+        $name->delete();
+        return 'ok';
+    }
+
+    public function manageSurname() {
+        $names = Family::all();
+        return view("pages.surname", compact("names"));
+    }
+
+    public function deleteSurname(Request $request) {
+        try{
+            $family = Family::find($request->input('id'));
+            $family->delete();
+            return response()->json(['success' => true]);
+        }
+        catch (QueryException $e) {
+            return response()->json(['success' => false, 'message' => 'A családnév nem törölhető, mert vannak hozzá kapcsolódó nevek.']);
+        }
+        catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Ismeretlen hiba a törlés során. ']);
+        }
+        
+    }
+
+    public function newSurname(Request $request) {
+        $validateData = $request->validate(['inputFamily' => 'required|alpha|min:2|max:20']); //VALIDÁTOR   alpha: csak betűket tartalmaz
+        
+        $familyRecord = new Family();
+        $familyRecord->surname = $request->input('inputFamily');
+        $familyRecord->save();
+        return redirect('/names/manage/surname');
+    }
+
+    public function newName(Request $request) {
+        $validateData = $request->validate(['inputFamily' => 'required|integer|exists:App\Models\Family,id',
+                                                    'inputName' => 'required|alpha|min:2|max:20']);
+
+        $name = new Name();
+        $name->family_id = $request->input('inputFamily');
+        $name->name = $request->input('inputName');
+        $name->save();
+        return redirect('/names');
+    }
+
+
+
+/* ----------------JEGYZETEK------------------------
+
+    function saveData(Request $request) {
+        
+    
+    }
+
+    function returnObject(){
+        $obj = new \stdClass();
+        $obj->name = "Tódor";
+        $obj->server = "SZBI-PG";
+        return response()->json($obj);
+    }
+
+
+    function returnError(){
+        return response()
+            ->view('error', ['valtozo'=> 'Ez egy változó értéke'], 404);
+    }
+
+
+    function redirectAway(){
+        return redirect()->away('https://szbi-pg.hu');
+    }
+
+
+*/
 
     /*$names = \DB::table("names")
         ->where('name', '<>', 'Bela')

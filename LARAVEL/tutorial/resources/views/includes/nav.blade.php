@@ -13,12 +13,39 @@
           <a class="nav-link" href="/names">Nevek</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Pricing</a>
+          <a class="nav-link" href="/names/manage/surname">Családnevek</a>
         </li>
         <li class="nav-item">
           <a class="nav-link disabled" aria-disabled="true">Disabled</a>
         </li>
+
+        @auth
+        <li>
+          <a class="nav-link" href="/profile">Profil</a>
+        </li>
+        @endauth
       </ul>
+
+<!--Authentication-->
+
+      <ul class="navbar-nav ms-auto">
+        @auth
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('form-logout').submit();">Kijelentkezés ({{ Auth::user()->name }})</a>
+            <form id="form-logout" method="post" action="/logout">
+              @csrf <!--ezt a tokent küldi el a form-->
+            </form>
+          </li>
+        @else 
+          <li class="nav-item"> <!--Aki nincs bejelentkezve:-->
+            <a class="nav-link" href="/login">Bejelentkezés</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/register">Regisztráció</a>
+          </li>
+        @endauth
+      </ul>
+
     </div>
   </div>
 </nav>
