@@ -9,6 +9,7 @@ git -v
 
 Mappa (érdemes githubon repoba mert ott csak azokat tárolja (?), githubra tükrözéskor kevesebb fájl van) -> terminál
 composer create-project --prefer-dist laravel/laravel projektNev
+composer create-project laravel/laravel projektNev
 
 Vagy
 
