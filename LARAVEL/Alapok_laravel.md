@@ -1,3 +1,5 @@
+set-ExecutionPolicy RemoteSigned -Scope CurrentUser ???
+composer install
 composer create-project laravel/laravel "name"
 
 
